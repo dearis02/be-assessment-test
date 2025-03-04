@@ -1,0 +1,10 @@
+environment: "development"
+
+server:
+  host: "0.0.0.0"
+  port: 3000
+
+database:
+  connection_string: "postgres://root:root@database:5432/assessment-test?sslmode=disable"
+  max_idle_cons: 5
+  max_open_cons: 20

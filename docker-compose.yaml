@@ -1,0 +1,28 @@
+services:
+  account_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      TZ: ${TZ:-Asia/Makassar}
+    ports:
+      - ${ACCOUNT_API_PORT}:3000
+    volumes:
+      - ./config:/app/config
+    depends_on:
+      - database
+    restart: always
+  database:
+    image: postgres:17
+    ports:
+      - ${POSTGRES_PORT}:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+    db-data:

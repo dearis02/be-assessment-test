@@ -1,19 +1,21 @@
+# Build stage
 FROM golang:1.23 AS builder
 
-WORKDIR /app
+WORKDIR /builder
 
 COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 
-RUN go build -o server ./cmd/server
+RUN CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/server
 
 FROM alpine:latest
 
-WORKDIR /root/
+WORKDIR /app
+ENV TZ=Asia/Makassar
 
-COPY --from=builder /app/server .
+COPY --from=builder /builder/server .
 
 EXPOSE 3000
 
