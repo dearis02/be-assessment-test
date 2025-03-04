@@ -2,6 +2,9 @@ package main
 
 import (
 	"be-assessment-test/internal/config"
+	"be-assessment-test/internal/handler"
+	"be-assessment-test/internal/repository"
+	"be-assessment-test/internal/service"
 	"be-assessment-test/internal/types"
 	"be-assessment-test/internal/util"
 	"be-assessment-test/internal/util/dbutil"
@@ -39,6 +42,13 @@ func main() {
 			Message:    "Hello",
 		})
 	})
+
+	userRepo := repository.NewUser(db)
+	bankAccountRepo := repository.NewBankAccount(db)
+
+	registrationService := service.NewRegistration(db, userRepo, bankAccountRepo)
+
+	handler.RegistrationRoutes(e, handler.NewRegistration(registrationService))
 
 	go func() {
 		var err error

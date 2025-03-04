@@ -47,6 +47,7 @@ func HTTPErrorHandler(e *echo.Echo) func(err error, c echo.Context) {
 			if d, ok := err.Err.(types.AppErr); ok {
 				code = d.StatusCode
 				body.Message = d.Message
+				body.Remark = d.Message
 
 				if d.Message == "" {
 					body.Message = http.StatusText(code)
