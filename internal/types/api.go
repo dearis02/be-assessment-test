@@ -23,6 +23,8 @@ func (r ApiResponse) MarshalJSON() ([]byte, error) {
 		StatusCode: r.StatusCode,
 		Message:    r.Message,
 		Data:       r.Data,
-		Errors:     r.Errors,
+		// not sure is this necessary?, cause there is already message field
+		Remark: r.Remark,
+		Errors: r.Errors,
 	})
 }

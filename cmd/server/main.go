@@ -50,9 +50,11 @@ func main() {
 
 	registrationService := service.NewRegistration(db, userRepo, bankAccountRepo)
 	transactionService := service.NewTransaction(db, bankAccountRepo, transactionRepo, ledgerEntryRepo)
+	bankAccountService := service.NewBankAccount(bankAccountRepo)
 
 	handler.RegistrationRoutes(e, handler.NewRegistration(registrationService))
 	handler.TransactionRoutes(e, handler.NewTransaction(transactionService))
+	handler.BankAccountRoutes(e, handler.NewBankAccount(bankAccountService))
 
 	go func() {
 		var err error

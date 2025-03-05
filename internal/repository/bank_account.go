@@ -97,11 +97,13 @@ func (r *bankAccountImpl) FindByBankAccountNumber(ctx context.Context, accountNu
 func (r *bankAccountImpl) UpdateBalanceTx(ctx context.Context, tx *sqlx.Tx, req types.BankAccount) error {
 	query := `
 		UPDATE bank_accounts
-		SET balance = $1
-		WHERE id = $2
+		SET 
+			balance = :balance,
+			updated_at = :updated_at
+		WHERE id = :id
 	`
 
-	_, err := tx.ExecContext(ctx, query, req.Balance, req.ID)
+	_, err := tx.NamedExecContext(ctx, query, req)
 	if err != nil {
 		return errors.New(err)
 	}

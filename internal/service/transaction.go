@@ -11,6 +11,7 @@ import (
 	"github.com/go-errors/errors"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/volatiletech/null/v9"
 )
 
 // check migration. for testing purposes
@@ -131,12 +132,14 @@ func (s *transactionImpl) Deposit(ctx context.Context, req types.TransactionDepo
 	}
 
 	userBankAccount.Balance = userBankAccount.Balance.Add(req.Amount)
+	userBankAccount.UpdatedAt = null.TimeFrom(timeNow)
 	err = s.bankAccountRepo.UpdateBalanceTx(ctx, tx, userBankAccount)
 	if err != nil {
 		return res, err
 	}
 
 	internalBankAccount.Balance = internalBankAccount.Balance.Add(req.Amount)
+	internalBankAccount.UpdatedAt = null.TimeFrom(timeNow)
 	err = s.bankAccountRepo.UpdateBalanceTx(ctx, tx, internalBankAccount)
 	if err != nil {
 		return res, err
@@ -249,12 +252,14 @@ func (s *transactionImpl) Withdraw(ctx context.Context, req types.TransactionWit
 	}
 
 	userBankAccount.Balance = userBankAccount.Balance.Sub(req.Amount)
+	userBankAccount.UpdatedAt = null.TimeFrom(timeNow)
 	err = s.bankAccountRepo.UpdateBalanceTx(ctx, tx, userBankAccount)
 	if err != nil {
 		return res, err
 	}
 
 	internalBankAccount.Balance = internalBankAccount.Balance.Sub(req.Amount)
+	internalBankAccount.UpdatedAt = null.TimeFrom(timeNow)
 	err = s.bankAccountRepo.UpdateBalanceTx(ctx, tx, internalBankAccount)
 	if err != nil {
 		return res, err
