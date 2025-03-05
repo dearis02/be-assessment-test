@@ -4,7 +4,6 @@ import (
 	pkg "be-assessment-test/pkg/custom_validator"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/google/uuid"
 )
 
 // region service types
@@ -24,7 +23,7 @@ func (r RegistrationCreateReq) Validate() error {
 }
 
 type RegistrationCreateRes struct {
-	BankAccountID uuid.UUID `json:"bank_account_id"`
+	BankAccountNumber string `json:"bank_account_number"`
 }
 
 // endregion service types

@@ -12,7 +12,7 @@ DO $$
 BEGIN
     CREATE TYPE transaction_status AS ENUM (
         'pending', 
-        'completed',
+        'success',
         'failed'
     );
     EXCEPTION WHEN duplicate_object THEN 
@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS bank_accounts (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL,
+    account_number VARCHAR(20) UNIQUE NOT NULL,
     balance DECIMAL(20,0) NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ,
@@ -69,4 +70,11 @@ CREATE TABLE IF NOT EXISTS ledger_entries (
     FOREIGN KEY (transaction_id) REFERENCES transactions(id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_ledger_entries_type ON ledger_entries USING HASH(type)
+CREATE INDEX IF NOT EXISTS idx_ledger_entries_type ON ledger_entries USING HASH(type);
+
+-- insert internal bank account
+INSERT INTO users(id, name, national_identity_number, phone_number, created_at)
+VALUES('01956515-757d-7026-9b45-72c18e2e977d', 'internal', 'internal', 'internal', now());
+
+INSERT INTO bank_accounts (id, user_id, account_number, balance, created_at) 
+VALUES ('01956515-8e79-7b1f-8b6b-4bcdca42f0bc','01956515-757d-7026-9b45-72c18e2e977d', '00000000000000000000', 0, now());

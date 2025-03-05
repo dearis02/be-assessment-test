@@ -45,10 +45,14 @@ func main() {
 
 	userRepo := repository.NewUser(db)
 	bankAccountRepo := repository.NewBankAccount(db)
+	transactionRepo := repository.NewTransaction(db)
+	ledgerEntryRepo := repository.NewLedgerEntry(db)
 
 	registrationService := service.NewRegistration(db, userRepo, bankAccountRepo)
+	transactionService := service.NewTransaction(db, bankAccountRepo, transactionRepo, ledgerEntryRepo)
 
 	handler.RegistrationRoutes(e, handler.NewRegistration(registrationService))
+	handler.TransactionRoutes(e, handler.NewTransaction(transactionService))
 
 	go func() {
 		var err error

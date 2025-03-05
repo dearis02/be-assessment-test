@@ -3,6 +3,7 @@ package service
 import (
 	"be-assessment-test/internal/repository"
 	"be-assessment-test/internal/types"
+	"be-assessment-test/internal/util"
 	"be-assessment-test/internal/util/dbutil"
 	"context"
 	"net/http"
@@ -71,10 +72,24 @@ func (s *registrationImpl) Create(ctx context.Context, req types.RegistrationCre
 		CreatedAt:              timeNow,
 	}
 
+	accountNumber := ""
+	for {
+		accountNumber = util.GenerateBankAccountNumber()
+		exs, err := s.bankAccountRepo.IsExistsByAccountNumber(ctx, accountNumber)
+		if err != nil {
+			return res, err
+		}
+
+		if !exs {
+			break
+		}
+	}
+
 	bankAccount := types.BankAccount{
-		ID:        bankAccountID,
-		UserID:    user.ID,
-		CreatedAt: timeNow,
+		ID:            bankAccountID,
+		UserID:        user.ID,
+		AccountNumber: accountNumber,
+		CreatedAt:     timeNow,
 	}
 
 	tx, err := dbutil.NewSqlxTx(ctx, s.db, nil)
@@ -94,7 +109,7 @@ func (s *registrationImpl) Create(ctx context.Context, req types.RegistrationCre
 		return res, err
 	}
 
-	res.BankAccountID = bankAccountID
+	res.BankAccountNumber = bankAccount.AccountNumber
 
 	err = tx.Commit()
 	if err != nil {
